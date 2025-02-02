@@ -1,4 +1,4 @@
-[functions."test"]
+[functions."schedule-notification"]
 schedule = "* * * * *"
 
 [build]
