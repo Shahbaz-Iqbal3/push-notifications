@@ -4,7 +4,8 @@
     "description": "A simple notification app",
     
     "dependencies": {
-      "firebase": "^9.21.0" 
+      "firebase": "^9.21.0" ,
+      "firebase-admin": "^9.12.0"
     }
   }
   
