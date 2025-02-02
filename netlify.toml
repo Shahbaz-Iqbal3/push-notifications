@@ -1,5 +1,6 @@
-[functions."schedule-notification"]
-schedule = "* * * * *"
+[functions]
+  directory = "netlify/functions/"
+  schedule = "* * * * *"
 
 [build]
   command = "cd netlify/functions && npm install && cd ../../ && npm install"
