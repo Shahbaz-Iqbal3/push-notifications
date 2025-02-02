@@ -19,7 +19,8 @@ exports.handler = async (event, context) => {
         if (tokens.length === 0) {
             return { statusCode: 200, body: 'No subscribers found' };
         }
-
+        console.log('Subscribers:', tokens);
+        
         // Send notifications
         const payload = {
             notification: {
