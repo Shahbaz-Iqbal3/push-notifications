@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Status Notifier</title>
+		<style>
+			body {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			textarea {
+				width: 100%;
+				height: 100px;
+				margin: 10px 0;
+			}
+			button {
+				padding: 10px 20px;
+				background: #0066cc;
+				color: white;
+				border: none;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Daily Status Update</h1>
+		<textarea id="status" placeholder="Enter your status..."></textarea>
+		<button onclick="submitStatus()">Submit Status</button>
+		<div id="previous-status"></div>
+
+		<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+
+		<script>
+			const firebaseConfig = {
+				apiKey: "AIzaSyA4oPwvgyL0umuWb66WLyNxbf-k2gGKglc",
+				authDomain: "shahbaz-eb776.firebaseapp.com",
+				databaseURL: "https://shahbaz-eb776-default-rtdb.firebaseio.com",
+				projectId: "shahbaz-eb776",
+				storageBucket: "shahbaz-eb776.appspot.com",
+				messagingSenderId: "389233998805",
+				appId: "1:389233998805:web:1f81a9a4532c96aa215b5c",
+				measurementId: "G-9CBQJBF52G",
+				vapidKey:
+					"BLB3efGPh8nqtTbsu17eGz6xhRQnaBVd-pm1B2OSFAFqZioHozXTBixlwNPhD6urfv5vOq2h60PeLQQSBRfoRII",
+			};
+
+			firebase.initializeApp(firebaseConfig);
+			const database = firebase.database();
+			const messaging = firebase.messaging();
+
+			// Request notification permission
+			async function initNotifications() {
+				try {
+					const permission = await Notification.requestPermission();
+					if (permission === "granted") {
+						
+						const token = await messaging.getToken({
+							vapidKey: firebaseConfig.vapidKey,
+						});
+						
+						if (token) {
+							database.ref("subscribers").child(token).set(true);
+						}
+					}
+				} catch (error) {
+					console.error("Notification error:", error);
+				}
+			}
+
+	if ("serviceWorker" in navigator) { 
+	  navigator.serviceWorker.register("/public/firebase-messaging-sw.js")
+	  .then((registration) => { 
+		messaging.useServiceWorker(registration); 
+	  })
+	  .catch((error) => {
+		console.error("Service Worker registration failed:", error);
+	  });
+	}
+			// Handle foreground messages
+			messaging.onMessage((payload) => {
+				console.log("Foreground message:", payload);
+				new Notification(payload.notification.title, {
+					body: payload.notification.body,
+					icon: "/icon.png",
+				});
+			});
+
+			// Status management
+			function submitStatus() {
+				const status = document.getElementById("status").value;
+				database.ref("statuses").push({
+					text: status,
+					timestamp: Date.now(),
+				});
+				loadPreviousStatus();
+			}
+
+			function loadPreviousStatus() {
+				database
+					.ref("statuses")
+					.limitToLast(1)
+					.on("value", (snapshot) => {
+						const statuses = snapshot.val();
+						if (statuses) {
+							const [latest] = Object.values(statuses);
+							document.getElementById("previous-status").innerHTML = `
+                        <h3>Last Status:</h3>
+                        <p>${latest.text}</p>
+                        <small>${new Date(latest.timestamp).toLocaleString()}</small>
+                    `;
+						}
+					});
+			}
+
+			// Initialize
+			window.onload = () => {
+				initNotifications();
+				loadPreviousStatus();
+			};
+		</script>
+	</body>
+</html>

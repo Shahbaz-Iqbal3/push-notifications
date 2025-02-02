@@ -1,0 +1,4 @@
+node_modules
+privatekeys.json
+dist/
+config.js
