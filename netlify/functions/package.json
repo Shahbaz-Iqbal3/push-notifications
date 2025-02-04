@@ -2,10 +2,8 @@
     "name": "notify",
     "version": "1.0.0",
     "description": "A simple notification app",
-    
     "dependencies": {
-      "firebase": "^9.21.0" ,
-      "firebase-admin": "13.0.2"
+        "firebase": "^9.21.0",
+        "firebase-admin": "^13.0.2"
     }
-  }
-  
+}
