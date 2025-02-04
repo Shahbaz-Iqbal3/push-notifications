@@ -19,7 +19,6 @@ exports.handler = async (event, context) => {
         if (tokens.length === 0) {
             return { statusCode: 200, body: 'No subscribers found' };
         }
-        console.log('Subscribers:', tokens);
         
         // Send notifications
         const payload = {
@@ -28,8 +27,9 @@ exports.handler = async (event, context) => {
                 body: 'It\'s time to update your daily status!'
             }
         };
-
+        
         const response = await admin.messaging().sendToDevice(tokens, payload);
+        console.log('Subscribers:', response.successCount);
         return {
             statusCode: 200,
             body: `Notifications sent: ${response.successCount}`
