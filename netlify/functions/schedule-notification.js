@@ -29,7 +29,7 @@ exports.handler = async (event, context) => {
         };
         
         const response = await admin.messaging().sendToDevice(tokens, payload);
-        console.log('Subscribers:', response.successCount);
+        console.log('Subscribers:', response);
         return {
             statusCode: 200,
             body: `Notifications sent: ${response.successCount}`
